@@ -49,7 +49,7 @@ class StainExtractorGPU():
         """
         return A / torch.linalg.norm(A, dim=1)[:, None]
 
-    def get_stain_matrix(self, I, luminosity_threshold=0.8, regularizer=0.1):
+    def get_stain_matrix(self, I, luminosity_threshold=0.8, regularizer=0.1, device='cuda'):
         """
         Stain matrix estimation via method of:
         A. Vahadane et al. 'Structure-Preserving Color Normalization and Sparse Stain Separation for Histological Images'
@@ -66,7 +66,7 @@ class StainExtractorGPU():
         OD = OD[tissue_mask]
         # Change to pylasso dictionary training.
         dictionary, losses = dict_learning(OD, n_components=2, alpha=regularizer, lambd=0.01,
-                                           algorithm='ista', device='cuda', steps=30, constrained=True, progbar=False, persist=True, init='ridge')
+                                           algorithm='ista', device=device, steps=30, constrained=True, progbar=False, persist=True, init='ridge')
         # H on first row.
         dictionary = dictionary.T
         if dictionary[0, 0] < dictionary[1, 0]:
