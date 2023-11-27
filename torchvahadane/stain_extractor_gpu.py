@@ -37,8 +37,8 @@ class StainExtractorGPU():
         # fix bug in original stain tools code where black background is not ignored.
         mask = (L < luminosity_threshold) & (L > 0)
         # Check it's not empty
-        if mask.sum() == 0:
-            raise TissueMaskException("Empty tissue mask computed")
+        # if mask.sum() == 0:
+        #     raise TissueMaskException("Empty tissue mask computed")
         return mask
 
     def normalize_matrix_rows(self, A):
@@ -62,6 +62,8 @@ class StainExtractorGPU():
         # convert to OD and ignore background
         tissue_mask = self.get_tissue_mask(
             I, luminosity_threshold=luminosity_threshold).reshape((-1,))
+        if tissue_mask.sum() == 0:
+            return None
         OD = convert_RGB_to_OD(I).reshape((-1, 3))
         OD = OD[tissue_mask]
         # Change to pylasso dictionary training.

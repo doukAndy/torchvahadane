@@ -45,6 +45,8 @@ class TorchVahadaneNormalizer():
                 I = torch.from_numpy(I).to(self.device)
             stain_matrix = self.stain_extractor.get_stain_matrix(I, device=self.device)
 
+        if stain_matrix==None:
+            return None, None
         concentrations = get_concentrations(I, stain_matrix, method=self.method)
         maxC = percentile(concentrations.T, 99, dim=0)
         return stain_matrix.cpu().numpy(), maxC.cpu().numpy()  # type: ignore
